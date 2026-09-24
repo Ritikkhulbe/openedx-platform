@@ -276,8 +276,15 @@ MARKETING_EMAILS_OPT_IN = False
 
 ############################# SET PATH INFORMATION #############################
 PROJECT_ROOT = path(__file__).abspath().dirname().dirname()  # /edx-platform/cms
+REPO_ROOT = PROJECT_ROOT.dirname()
+COMMON_ROOT = REPO_ROOT / "common"
+OPENEDX_ROOT = REPO_ROOT / "openedx"
 CMS_ROOT = REPO_ROOT / "cms"  # noqa: F405
 LMS_ROOT = REPO_ROOT / "lms"  # noqa: F405
+ENV_ROOT = REPO_ROOT.dirname()  # virtualenv dir /edx-platform is in
+COURSES_ROOT = ENV_ROOT / "data"
+XMODULE_ROOT = REPO_ROOT / "xmodule"
+MEDIA_ROOT = ENV_ROOT / "media_root"
 
 GITHUB_REPO_ROOT = ENV_ROOT / "data"  # noqa: F405
 
@@ -933,6 +940,9 @@ INSTALLED_APPS = [
     # Core models to represent courses
     "openedx_catalog",
 
+    # Competency criteria and student progress models
+    "openedx_learning",
+
     # Core apps that power libraries
     "openedx_content",
     *openedx_content_backcompat_apps_to_install(),
@@ -1136,7 +1146,7 @@ VIDEO_IMAGE_SETTINGS = dict(
     # STORAGE_CLASS='storages.backends.s3boto3.S3Boto3Storage',
     # STORAGE_KWARGS=dict(bucket='video-image-bucket'),
     STORAGE_KWARGS=dict(
-        location=MEDIA_ROOT,  # noqa: F405
+        location=Derived(lambda settings: settings.MEDIA_ROOT),
     ),
     DIRECTORY_PREFIX='video-images/',
     BASE_URL=MEDIA_URL,  # noqa: F405
